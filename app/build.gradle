@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
 }
+
 
 android {
     namespace 'com.example.bestquizz'
@@ -9,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.bestquizz"
-        minSdk 32
+        minSdk 31
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -33,6 +35,14 @@ android {
 }
 
 dependencies {
+
+    def moshi_version = "1.9.3"
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
