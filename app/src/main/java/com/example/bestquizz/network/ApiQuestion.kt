@@ -1,5 +1,6 @@
 package com.example.bestquizz.network
 
+import com.example.bestquizz.model.QuestionResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call

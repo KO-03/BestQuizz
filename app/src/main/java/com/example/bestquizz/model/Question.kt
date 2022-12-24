@@ -1,4 +1,4 @@
-package com.example.bestquizz.network
+package com.example.bestquizz.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -14,4 +14,4 @@ data class Question (
 )
 
 data class QuestionResponse(@Json(name="results")
-val result : List<Question>)
+                            val result : List<Question>)
