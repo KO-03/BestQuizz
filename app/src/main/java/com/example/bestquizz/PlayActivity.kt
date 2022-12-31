@@ -92,7 +92,7 @@ class PlayActivity : BaseActivity() {
                 activity_experience.putExtra("Score", score)
                 // ------ create User ----------
                 val checkInsertData =
-                    db!!.createtPlayer(player,score.toString())
+                    db!!.savePlayer(player, score)
                 startActivity(activity_experience)
             }
         }

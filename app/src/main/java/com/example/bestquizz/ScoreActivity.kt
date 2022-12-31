@@ -34,7 +34,7 @@ class ScoreActivity : BaseActivity() {
         findViewById<TextView>(R.id.scoreEndGame).setText(this.intent.getStringExtra("Score").toString())
         findViewById<TextView>(R.id.pseudoEndGame).setText(this.intent.getStringExtra("Pseudo").toString())
 
-        // ------ on affiche le core des joueurs
+        // ------ on affiche le score des joueurs
         var listPlayer : List<Player> = db!!.getListUser(db!!.getData())
         Log.e("list player ",listPlayer.toString())
         Toast.makeText(this@ScoreActivity, listPlayer.toString(), Toast.LENGTH_LONG).show()
