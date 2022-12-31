@@ -31,6 +31,8 @@ class ScoreActivity : BaseActivity() {
         }
         mainMenuButton.setOnClickListener(mainMenuBtnAction)
 
+        Log.e("Score player ", this.intent.getStringExtra("Score").toString())
+
         findViewById<TextView>(R.id.scoreEndGame).setText(this.intent.getStringExtra("Score").toString())
         findViewById<TextView>(R.id.pseudoEndGame).setText(this.intent.getStringExtra("Pseudo").toString())
 
