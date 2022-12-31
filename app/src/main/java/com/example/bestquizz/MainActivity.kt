@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import com.example.bestquizz.model.*
 import com.example.bestquizz.network.ApiQuestion
@@ -19,17 +20,23 @@ class MainActivity : BaseActivity() {
 
         super.addActionBarListeners()
 
-        val player = findViewById<TextView>(R.id.playerNameInput).text.toString()
+        //val player = findViewById<EditText>(R.id.playerNameInput).text.toString()
+
+        //Log.w("MainPage", player + " / " + findViewById<EditText>(R.id.playerNameInput).text.toString())
 
         // ------------------ Intent vers le prochain activity ------------------------ //
         // On récupère le bouton
         val playButton = findViewById<View>(R.id.playButton) as Button
         // On crée un listener
         val playBtnAction = View.OnClickListener {
+            val player = findViewById<EditText>(R.id.playerNameInput).text.toString()
+
+            Log.w("MainPage", player + " / " + findViewById<EditText>(R.id.playerNameInput).text.toString())
+
             val activity_experience = Intent(this@MainActivity, PlayActivity::class.java)
             // passage du nom du joueur
             activity_experience.putExtra("Pseudo", player)
-            activity_experience.putExtra("Timer", player)
+            //activity_experience.putExtra("Timer", player)
             startActivity(activity_experience)
         }
         playButton.setOnClickListener(playBtnAction)

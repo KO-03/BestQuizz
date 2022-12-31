@@ -1,5 +1,7 @@
 package com.example.bestquizz
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bestquizz.model.*
 import com.example.bestquizz.network.ApiQuestion
+import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Response
 
@@ -20,7 +23,9 @@ class PlayActivity : BaseActivity() {
     private lateinit var questions: ArrayList<Question>
 
     private var questionIndex: Int = 0
+    private var answered: Boolean = false
     private var score: Int = 0
+    private lateinit var nextBtn: CircleImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +34,12 @@ class PlayActivity : BaseActivity() {
 
         // recuperer le extra du Intent
         player = this.intent.getStringExtra("Pseudo").toString()
+
+        Log.w("ExtraIntent", player)
+
+        nextBtn = findViewById(R.id.nextButton)
+        nextBtn.isClickable = false
+        nextBtn.alpha = .5f
 
         // ------------------ questions request ------------------------ //
         var questionsValue : List<QuestionEntity>
@@ -65,21 +76,29 @@ class PlayActivity : BaseActivity() {
         questions = quiz.questions
 
         rafraichirInterface()
+        nextBtn.setOnClickListener{
 
-/*
-        for (i in questions.indices) {
-            questionIndex = i
-            //
-            rafraichirInterface()
-            //lancerChrono()
-
+            if(questionIndex < quiz.nbOfQuestions!! - 1) {
+                //Toast.makeText(applicationContext, "NEXT", Toast.LENGTH_SHORT).show()
+                questionIndex++
+                nextBtn.isClickable = false
+                rafraichirInterface()
+            } else {
+                Toast.makeText(applicationContext, "FIN", Toast.LENGTH_SHORT).show()
+                val activity_experience = Intent(this@PlayActivity, ScoreActivity::class.java)
+                // passage du nom du joueur
+                activity_experience.putExtra("Pseudo", player)
+                activity_experience.putExtra("Score", score)
+                startActivity(activity_experience)
+            }
         }
-*/
-
-
     }
 
     fun rafraichirInterface() {
+        answered = false
+        nextBtn.alpha = .5f
+        nextBtn.isClickable = false
+
         // changer theme
         findViewById<TextView>(R.id.quizTheme).setText(questions.get(questionIndex).category)
         // changer numéro
@@ -95,15 +114,18 @@ class PlayActivity : BaseActivity() {
 
         myAdapter.setOnClickListener(object : ChoiceListAdapter.RecyclerViewClickListener{
             override fun recyclerViewListClicked(v: Button, position: Int) {
-                Toast.makeText(this@PlayActivity, "$position + et ", Toast.LENGTH_LONG).show()
-                //verifierResponse(position, v)
-
-                if(choiceList.get(position).isCorrect) {
-                    Log.w("Button", choiceList.get(position).isCorrect.toString())
+                if(!answered) {
+                    if(choiceList[position].isCorrect) {
+                        v.setTextColor(Color.GREEN)
+                        score+=10
+                        findViewById<TextView>(R.id.score).setText(score.toString())
+                    } else {
+                        v.setTextColor(Color.RED)
+                    }
+                    nextBtn.alpha = 1f
+                    nextBtn.isClickable = true
                 }
-
-                choiceList.get(position).isCorrect
-
+                answered = true
             }
         })
 
@@ -114,9 +136,7 @@ class PlayActivity : BaseActivity() {
         }
     }
 
-    fun verifierResponse(position: Int, button : Button) {
-        if(choiceList.get(position).isCorrect) {
-        }
+    fun verifierResponse(button : Button, position: Int,) {
     }
 
     fun lancerChrono() {
