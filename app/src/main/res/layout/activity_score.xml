@@ -38,11 +38,11 @@
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            tools:srcCompat="@drawable/trophy"
+            android:src="@drawable/trophy"
             android:contentDescription="Player avatar"/>
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/pseudoEndGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="LORIS"
@@ -59,7 +59,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/scoreEndGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SCORE : 1000"
