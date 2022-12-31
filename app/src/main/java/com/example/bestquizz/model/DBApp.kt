@@ -5,10 +5,18 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import java.io.IOException
 
 class DBApp(context: Context?) :
     SQLiteOpenHelper(context, "bestquizz.db", null, 1) {
+
+    companion object {
+        private const val PlayerS = "Players"
+        private const val createPlayer = ("CREATE TABLE "
+                + PlayerS + "(name TEXT primary key,  bestScore Int)")
+    }
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createPlayer)
     }
@@ -18,28 +26,44 @@ class DBApp(context: Context?) :
         onCreate(db)
     }
 
-    fun createtPlayer(name: String?, bestScore: String?): Boolean {
+    fun savePlayer(name: String, bestScore: Int): Boolean {
+        val db = this.writableDatabase
+        val cursor = db.rawQuery("select * from $PlayerS where name = ?", arrayOf(name))
+        return if (cursor.count > 0) {
+            cursor.moveToFirst()
+            if(cursor.getInt(1) < bestScore ){
+                //Log.e("save best player ","new best score")
+                return this.updatePlayer(name,bestScore)
+            }
+            else{
+                //Log.e("save 1 player ",cursor.getString(0))
+                return true;
+            }
+        } else {
+            // Log.e("save 2 player ", name)
+            return this.createtPlayer(name,bestScore)
+
+        }
+    }
+
+    private fun createtPlayer(name: String, bestScore: Int): Boolean {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put("name", name)
         contentValues.put("bestScore", bestScore)
         val result = db.insert(PlayerS, null, contentValues)
-        return if (result == -1L) false else true
+        return result != -1L
     }
 
-    fun updatePlayer(name: String, bestScore: String?): Boolean {
+    private fun updatePlayer(name: String, bestScore: Int): Boolean {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put("name", name)
         contentValues.put("bestScore", bestScore)
-        val cursor = db.rawQuery("select * from Player where name = ?", arrayOf(name))
+        val cursor = db.rawQuery("select * from $PlayerS where name = ?", arrayOf(name))
         return if (cursor.count > 0) {
             val result = db.update(PlayerS, contentValues, "name=?", arrayOf(name)).toLong()
-            if (result == -1L) {
-                return false
-            } else {
-                return true
-            }
+            return result == -1L
         } else {
             false
         }
@@ -47,7 +71,7 @@ class DBApp(context: Context?) :
 
     fun getData(): Cursor{
         val db = this.writableDatabase
-        return db.rawQuery("select * from $PlayerS order by bestScore ", null)
+        return db.rawQuery("select * from $PlayerS order by bestScore desc ", null)
     }
 
     fun deleteTable(tableName: String?) {
@@ -59,7 +83,7 @@ class DBApp(context: Context?) :
         var listPlayer : List<Player> = listOf();
         try {
             while (res.moveToNext()) {
-                listPlayer += Player(res.getString(0),res.getString(1))
+                listPlayer += Player(res.getString(0),res.getInt(1))
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -67,9 +91,4 @@ class DBApp(context: Context?) :
         return listPlayer;
     }
 
-    companion object {
-        private const val PlayerS = "Players"
-        private const val createPlayer = ("CREATE TABLE "
-                + PlayerS + "(name TEXT primary key,  bestScore TEXT)")
-    }
 }
