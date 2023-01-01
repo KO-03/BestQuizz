@@ -3,6 +3,7 @@ package com.example.bestquizz
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.Html
 import android.util.Log
 import android.widget.Button
@@ -28,6 +29,7 @@ class PlayActivity : BaseActivity() {
     private var answered: Boolean = false
     private var score: Int = 0
     private lateinit var nextBtn: CircleImageView
+    private lateinit var timer: TextView
     private var db: DBApp? = DBApp(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,7 @@ class PlayActivity : BaseActivity() {
 
         // recuperer le extra du Intent
         player = this.intent.getStringExtra("Pseudo").toString()
+        timer = findViewById(R.id.timer)
 
         Log.w("ExtraIntent", player)
 
@@ -87,8 +90,12 @@ class PlayActivity : BaseActivity() {
                 Toast.makeText(applicationContext, "FIN", Toast.LENGTH_SHORT).show()
                 val activity_experience = Intent(this@PlayActivity, ScoreActivity::class.java)
                 // passage du nom du joueur
-                activity_experience.putExtra("Pseudo", player)
-                activity_experience.putExtra("Score", "100000")
+                val bundle = Bundle()
+
+                bundle.putString("Pseudo", player)
+                bundle.putInt("Score", this.score)
+
+                activity_experience.putExtras(bundle)
                 // ------ create User ----------
                 val checkInsertData =
                     db!!.savePlayer(player, score)
@@ -112,6 +119,8 @@ class PlayActivity : BaseActivity() {
         // changer les choix
         choiceList.clear()
         choiceList.addAll(questions.get(questionIndex).choiceList)
+
+        lancerChrono()
 
         val myAdapter = ChoiceListAdapter(choiceList)
 
@@ -140,22 +149,43 @@ class PlayActivity : BaseActivity() {
     }
 
     fun lancerChrono() {
-        TODO("Timmer")
+        var counter = 30
+        object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                if(!answered) {
+                    timer.text = counter.toString()
+                    counter--
+                } else {
+                    this.cancel()
+                }
+            }
+            override fun onFinish() {
+                timer.text = "Time's up !"
+                answered = true
+                nextBtn.alpha = 1f
+                nextBtn.isClickable = true
+            }
+        }.start()
     }
 
     fun mapQuestionList(questionEntities : List<QuestionEntity>) : ArrayList<Question>{
         var questionsList : ArrayList<Question> = arrayListOf()
         var newChoiceList : ArrayList<Choice> = arrayListOf()
         var question : String = ""
+        var choiceFormatted : String = ""
 
         for(questionEntity in questionEntities) {
+            // Add all incorrect answers
             questionEntity.incorrect_answers.forEach{
-                newChoiceList.add(Choice(it, false))
+                choiceFormatted = HtmlCompat.fromHtml(it, FROM_HTML_MODE_LEGACY).toString()
+                newChoiceList.add(Choice(choiceFormatted, false))
             }
             question = questionEntity.question
             question = HtmlCompat.fromHtml(question, FROM_HTML_MODE_LEGACY).toString()
 
-            newChoiceList.add(Choice(questionEntity.correct_answer, true))
+            // add correct answer
+            choiceFormatted = HtmlCompat.fromHtml(questionEntity.correct_answer, FROM_HTML_MODE_LEGACY).toString()
+            newChoiceList.add(Choice(choiceFormatted, true))
             newChoiceList.shuffle()
             questionsList.add(Question(questionEntity.category, questionEntity.type, questionEntity.difficulty, question, newChoiceList))
             newChoiceList = arrayListOf()

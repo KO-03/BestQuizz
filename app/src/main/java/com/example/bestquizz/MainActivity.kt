@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import com.example.bestquizz.model.*
 
 class MainActivity : BaseActivity() {
@@ -28,9 +29,23 @@ class MainActivity : BaseActivity() {
         sonQ.playTheme()
         // ------------------------------------------
 
-        // ------------------ questions request ------------------------ //
-        //var questionsValue : List<Question> = listOf();
-        //val questionResponse = ApiQuestion.questionService.fetchQuestions(10,11,"easy","multiple")
+
+        // ------------------ Score and pseudo ------------------------ //
+        var listPlayer : List<Player> = db!!.getListUser(db!!.getData())
+
+        var pseudo = ""
+        var score = ""
+
+        if(listPlayer.isEmpty()) {
+            pseudo = "Loris El Crackito"
+            score = "1 000 000"
+        } else {
+            pseudo = listPlayer[0].name
+            score = listPlayer[0].bestScore.toString()
+        }
+
+        findViewById<TextView>(R.id.pseudoLabelHome).text = pseudo
+        findViewById<TextView>(R.id.scoreLabelHome).text = score
 
         // ------------------ Intent vers le prochain activity ------------------------ //
         // On récupère le bouton
@@ -38,23 +53,18 @@ class MainActivity : BaseActivity() {
         // On crée un listener
         val playBtnAction = View.OnClickListener {
             val player = findViewById<EditText>(R.id.playerNameInput).text.toString()
-
             Log.w("MainPage", player + " / " + findViewById<EditText>(R.id.playerNameInput).text.toString())
 
-            val activity_experience = Intent(this@MainActivity, PlayActivity::class.java)
-
+            val playIntent = Intent(this@MainActivity, PlayActivity::class.java)
             // ! ------ play son clik exemple  -----
             sonQ.playSon(this@MainActivity,R.raw.click)
             // ------------------------------------------
             // ! ----- stop theme son ----------
             sonQ.stopTheme()
             // -------------------------------------
-
             // passage du nom du joueur
-            activity_experience.putExtra("Pseudo", player)
-            //activity_experience.putExtra("Timer", timer)
-
-            startActivity(activity_experience)
+            playIntent.putExtra("Pseudo", player)
+            startActivity(playIntent)
         }
         playButton.setOnClickListener(playBtnAction)
 
@@ -65,7 +75,6 @@ class MainActivity : BaseActivity() {
             startActivity(activity_experience)
         }
         easterEggBtn.setOnClickListener(easterAction)
-
     }
 
     override fun onDestroy() {
