@@ -37,6 +37,6 @@ interface QuestionService {
     @GET("api.php")
     fun fetchQuestions(
         @Query("amount") amount: Int, @Query("category") category: Int,
-        @Query("difficulty") difficulty: String, @Query("type") type: String
+        @Query("difficulty") difficulty: String, @Query("type") type: String, @Query("encode") encoding: String
     ): Call<QuestionResponse>
 }

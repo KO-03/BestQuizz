@@ -7,36 +7,49 @@ import android.util.Log
 import android.widget.Toast
 import java.io.IOException
 
-class SonQuizz {
+object SonQuizz {
 
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var themePlayer: MediaPlayer
 
     // resid_son => R.raw.click...
     fun playSon(c: Context?, resid_son: Int) {
-        if(!this::mediaPlayer.isInitialized){
-            mediaPlayer = MediaPlayer.create(c, resid_son)
-        }
+       // if(!this::mediaPlayer.isInitialized){
+       //     mediaPlayer = MediaPlayer.create(c, resid_son)
+        //}
+
+        stopPlayer()
+        mediaPlayer = MediaPlayer.create(c, resid_son)
+
         if(mediaPlayer.isPlaying){
             mediaPlayer.pause()
-            mediaPlayer.seekTo(0)
+            mediaPlayer.seekTo(0) // reset
             //return@OnClickListener
         }
         mediaPlayer!!.start()
     }
 
     fun playTheme(){
-        val audioUrl = "https://bensound.com/bensound-music/bensound-ukulele.mp3"
-        themePlayer = MediaPlayer()
-        themePlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
+
+        if(!this::themePlayer.isInitialized){
+            val audioUrl = "https://bensound.com/bensound-music/bensound-ukulele.mp3"
+            themePlayer = MediaPlayer()
+            themePlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
+            try {
+                themePlayer!!.setDataSource(audioUrl)
+                themePlayer!!.prepare()
+            }catch (e: IOException){
+                //e.printStackTrace()
+                Log.e("Erreur start","Erreur lors du lancement de l'audio")
+            }
+        }
         try {
-            themePlayer!!.setDataSource(audioUrl)
-            themePlayer!!.prepare()
             themePlayer!!.start()
-        }catch (e: IOException){
+        }catch (e: IllegalStateException){
             //e.printStackTrace()
             Log.e("Erreur start","Erreur lors du lancement de l'audio")
         }
+
     }
 
     fun pauseSon() {
@@ -47,8 +60,7 @@ class SonQuizz {
 
     fun pauseTheme(){
         if(this::themePlayer.isInitialized){
-            themePlayer!!.stop()
-            themePlayer!!.reset()
+            themePlayer.pause()
         }
     }
     fun stopTheme(){

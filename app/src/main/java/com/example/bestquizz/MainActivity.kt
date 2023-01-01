@@ -8,11 +8,22 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import com.example.bestquizz.model.*
+import com.example.bestquizz.network.ApiQuestion
+import retrofit2.Call
+import retrofit2.Response
 
 class MainActivity : BaseActivity() {
     private var db: DBApp? = DBApp(this)
-    private var sonQ : SonQuizz = SonQuizz()
+    val nbresponse : Int = 10
+    val category : Int = 11
+    val difficulty : String = "easy"
+    val questionType : String = "multiple"
+    val questionEncoding : String = ""
+    lateinit var questionsValue : ArrayList<QuestionEntity>
+    var questionIsLoad : Boolean = false
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,40 +32,71 @@ class MainActivity : BaseActivity() {
 
         super.addActionBarListeners()
 
+        loadQuestions()
         // ---- class qui gère la bd en local ----
         val res : Cursor = db!!.getData()
 
         // ! ------ play son theme  -----
-        sonQ.playTheme()
+        SonQuizz.playTheme()
         // ------------------------------------------
 
-        // ------------------ questions request ------------------------ //
-        //var questionsValue : List<Question> = listOf();
-        //val questionResponse = ApiQuestion.questionService.fetchQuestions(10,11,"easy","multiple")
+        // ------------------ Score and pseudo ------------------------ //
+        var listPlayer : List<Player> = db!!.getListUser(db!!.getData())
+
+        var pseudo = ""
+        var score = ""
+
+        if(listPlayer.isEmpty()) {
+            pseudo = "Loris El Crackito"
+            score = "1 000 000"
+        } else {
+            pseudo = listPlayer[0].name
+            score = listPlayer[0].bestScore.toString()
+        }
+
+        findViewById<TextView>(R.id.pseudoLabelHome).text = pseudo
+        findViewById<TextView>(R.id.scoreLabelHome).text = score
 
         // ------------------ Intent vers le prochain activity ------------------------ //
         // On récupère le bouton
         val playButton = findViewById<View>(R.id.playButton) as Button
         // On crée un listener
         val playBtnAction = View.OnClickListener {
-            val player = findViewById<EditText>(R.id.playerNameInput).text.toString()
+            if(questionIsLoad){
 
-            Log.w("MainPage", player + " / " + findViewById<EditText>(R.id.playerNameInput).text.toString())
+                val playerName = findViewById<EditText>(R.id.playerNameInput).text.toString()
 
-            val activity_experience = Intent(this@MainActivity, PlayActivity::class.java)
+                if(playerName != "") {
+                    Log.w(
+                        "MainPage",
+                        playerName + " / " + findViewById<EditText>(R.id.playerNameInput).text.toString()
+                    )
 
-            // ! ------ play son clik exemple  -----
-            sonQ.playSon(this@MainActivity,R.raw.click)
-            // ------------------------------------------
-            // ! ----- stop theme son ----------
-            sonQ.stopTheme()
-            // -------------------------------------
+                    val playIntent = Intent(this@MainActivity, PlayActivity::class.java)
 
-            // passage du nom du joueur
-            activity_experience.putExtra("Pseudo", player)
-            //activity_experience.putExtra("Timer", timer)
+                    // ! ------ play son clik exemple  -----
+                    SonQuizz.playSon(this@MainActivity, R.raw.click)
+                    // ------------------------------------------
 
-            startActivity(activity_experience)
+                    // passage du nom du joueur
+                    playIntent.putExtra("Pseudo", playerName)
+
+                    val bundle = Bundle();
+                    bundle.putParcelableArrayList("questions",questionsValue)
+                    playIntent.putExtras(bundle)
+
+
+                    startActivity(playIntent)
+                }
+                else{
+                    Toast.makeText(this@MainActivity, "Le nom ne doit pas être vide", Toast.LENGTH_SHORT).show()
+                }
+            }
+            else{
+                Toast.makeText(this@MainActivity, "chargement des données", Toast.LENGTH_SHORT).show()
+
+                loadQuestions()
+            }
         }
         playButton.setOnClickListener(playBtnAction)
 
@@ -65,12 +107,40 @@ class MainActivity : BaseActivity() {
             startActivity(activity_experience)
         }
         easterEggBtn.setOnClickListener(easterAction)
-
     }
 
+    fun loadQuestions(){
+        questionIsLoad = false;
+        // ------------------- API call -------------------
+        // ------------------ questions request ------------------------ //
+
+        val questionResponse = ApiQuestion.questionService.fetchQuestions(nbresponse,category,difficulty,questionType, questionEncoding)
+
+        questionResponse.enqueue(object : retrofit2.Callback<QuestionResponse> {
+            override fun onResponse(
+                call: Call<QuestionResponse>,
+                response: Response<QuestionResponse>
+            ) {
+                if(response.isSuccessful) {
+                    Log.w("questions", ""+response.body())
+                    val result = response.body()?.result
+                    result?.let {
+                        // use result val here
+                        questionsValue = result as ArrayList<QuestionEntity>
+                        questionIsLoad = true
+                    }
+                }
+            }
+            override fun onFailure(call: Call<QuestionResponse>, t: Throwable) {
+                Log.e("failed", ""+ t.message)
+                Toast.makeText(this@MainActivity, "Les questions n'ont pas pu être chargé", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+    }
     override fun onDestroy() {
         // ! ----- libérer les ressources de l'audio ----------
-        sonQ.destroy()
+        SonQuizz.destroy()
         // ---------------
         super.onDestroy()
     }
