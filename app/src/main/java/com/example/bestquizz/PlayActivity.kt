@@ -44,6 +44,7 @@ class PlayActivity : BaseActivity() {
 
         // ------------------ questions request ------------------------ //
         var questionsValue : List<QuestionEntity>
+
         val questionResponse = ApiQuestion.questionService.fetchQuestions(10,11,"easy","multiple")
 
         questionResponse.enqueue(object : retrofit2.Callback<QuestionResponse> {
