@@ -11,26 +11,24 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.example.bestquizz.model.*
-import com.example.bestquizz.network.ApiQuestion
-import retrofit2.Call
-import retrofit2.Response
 
 class MainActivity : BaseActivity() {
     private var db: DBApp? = DBApp(this)
+    /*
     val nbresponse : Int = 10
-    val category : Int = 11
-    val difficulty : String = "easy"
     val questionType : String = "multiple"
     val questionEncoding : String = ""
     lateinit var questionsValue : ArrayList<QuestionEntity>
     var questionIsLoad : Boolean = false
+    */
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        super.addActionBarListeners()
+        super.goBackButtonListener()
+        super.gameSettings()
 
         loadQuestions()
         // ---- class qui gère la bd en local ----
@@ -109,35 +107,7 @@ class MainActivity : BaseActivity() {
         easterEggBtn.setOnClickListener(easterAction)
     }
 
-    fun loadQuestions(){
-        questionIsLoad = false;
-        // ------------------- API call -------------------
-        // ------------------ questions request ------------------------ //
 
-        val questionResponse = ApiQuestion.questionService.fetchQuestions(nbresponse,category,difficulty,questionType, questionEncoding)
-
-        questionResponse.enqueue(object : retrofit2.Callback<QuestionResponse> {
-            override fun onResponse(
-                call: Call<QuestionResponse>,
-                response: Response<QuestionResponse>
-            ) {
-                if(response.isSuccessful) {
-                    Log.w("questions", ""+response.body())
-                    val result = response.body()?.result
-                    result?.let {
-                        // use result val here
-                        questionsValue = result as ArrayList<QuestionEntity>
-                        questionIsLoad = true
-                    }
-                }
-            }
-            override fun onFailure(call: Call<QuestionResponse>, t: Throwable) {
-                Log.e("failed", ""+ t.message)
-                Toast.makeText(this@MainActivity, "Les questions n'ont pas pu être chargé", Toast.LENGTH_SHORT).show()
-
-            }
-        })
-    }
     override fun onDestroy() {
         // ! ----- libérer les ressources de l'audio ----------
         SonQuizz.destroy()

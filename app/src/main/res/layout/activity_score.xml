@@ -75,6 +75,15 @@
             android:elevation="15dp"
             android:text="Menu principal" />
 
+        <Button
+            android:id="@+id/shareBtn"
+            android:background="@drawable/dark_orange_btn_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="15dp"
+            android:text="Share your score" />
+
     </LinearLayout>
 
     <LinearLayout

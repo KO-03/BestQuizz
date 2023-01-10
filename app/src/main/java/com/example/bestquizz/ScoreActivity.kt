@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bestquizz.model.DBApp
@@ -21,7 +20,7 @@ class ScoreActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_score)
-        super.addActionBarListeners()
+        super.goBackButtonListener()
         // ------------------ Intent vers le prochain activity ------------------------ //
         // On récupère le bouton
         val mainMenuButton = findViewById<View>(R.id.mainMenuBtn) as Button
@@ -88,27 +87,25 @@ class ScoreActivity : BaseActivity() {
                         }
                 */
 
-        /*
+
         // ---------- partager de données sur une autre App ----------------
                 // On initialise l'élément à envoyer
 
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, "Mob Score : "+score.toString())
+                    putExtra(Intent.EXTRA_TEXT, "Voici mon score sur le BestQuizz App : " + score.toString() + " pts. \nL'app est dispo prochainement sur Android et iOS !!")
                     type = "text/plain"
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
 
                 // ***************** ajouter un boutton ici ************
-                val shareButton = findViewById<View>(R.id.leaderBoardList) as Button
+                val shareButton = findViewById<View>(R.id.shareBtn) as Button
                 // On crée un listener
                 val shareAction = View.OnClickListener {
                     startActivity(shareIntent) // On appelle l'élément pour l'envoie
                 }
                 shareButton.setOnClickListener(shareAction)
                 // _________________________________________________________
-
-         */
 
         SonQuizz.playTheme()
 
