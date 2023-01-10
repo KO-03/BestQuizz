@@ -59,8 +59,13 @@ object SonQuizz {
     }
 
     fun pauseTheme(){
-        if(this::themePlayer.isInitialized){
-            themePlayer.pause()
+        try {
+            if(this::themePlayer.isInitialized){
+                themePlayer.pause()
+            }
+        }catch (e: IllegalStateException){
+            //e.printStackTrace()
+            Log.e("Erreur pause theme","Erreur lors du pause du theme")
         }
     }
     fun stopTheme(){

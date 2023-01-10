@@ -26,7 +26,7 @@ class LeaderListAdapter(private val leaderList : List<Player>) : RecyclerView.Ad
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.rank.text = position.toString()
+        holder.rank.text = (position + 1).toString()
         holder.pseudo.text = leaderList[position].name
         holder.bestScore.text = leaderList[position].bestScore.toString()
 

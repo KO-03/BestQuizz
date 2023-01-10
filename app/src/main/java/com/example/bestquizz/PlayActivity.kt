@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.Html
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -14,11 +13,7 @@ import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bestquizz.model.*
-import com.example.bestquizz.network.ApiQuestion
 import de.hdodenhof.circleimageview.CircleImageView
-import retrofit2.Call
-import retrofit2.Response
-import java.io.Serializable
 
 class PlayActivity : BaseActivity() {
     private var choiceList : ArrayList<Choice> = ArrayList()
@@ -36,7 +31,7 @@ class PlayActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play)
-        super.addActionBarListeners()
+        super.goBackButtonListener()
 
         // ! ----- stop theme son ----------
         SonQuizz.pauseTheme()

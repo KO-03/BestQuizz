@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bestquizz.model.DBApp
@@ -21,7 +20,8 @@ class ScoreActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_score)
-        super.addActionBarListeners()
+        super.goBackButtonListener()
+
         // ------------------ Intent vers le prochain activity ------------------------ //
         // On récupère le bouton
         val mainMenuButton = findViewById<View>(R.id.mainMenuBtn) as Button
@@ -44,10 +44,11 @@ class ScoreActivity : BaseActivity() {
         }
 
         var pseudo = player?.getString("Pseudo")
-        var score = player?.getInt("Score")
-
-        findViewById<TextView>(R.id.scoreEndGame).setText(pseudo)
-        findViewById<TextView>(R.id.pseudoEndGame).setText(score.toString())
+        var score = player?.getInt("Score",0)
+        if(score == null)
+            score = 0
+        findViewById<TextView>(R.id.scoreEndGame).setText(score.toString())
+        findViewById<TextView>(R.id.pseudoEndGame).setText(pseudo)
 
         var compliment: String = ""
 
@@ -58,7 +59,6 @@ class ScoreActivity : BaseActivity() {
             in 81..100 -> compliment = "EXCELLENT"
         }
         findViewById<TextView>(R.id.complimentScore).setText(compliment)
-
 
         // ------ on affiche le score des joueurs
         var listPlayer : List<Player> = db!!.getListUser(db!!.getData())
@@ -71,44 +71,24 @@ class ScoreActivity : BaseActivity() {
         recyclerView.adapter = LeaderListAdapter(listPlayer)
         // _____________________________________________________
 
-                /*   val linearLayout = findViewById<LinearLayout>(R.id.leaderLayout)
-                // ------------------ Placeholder pour le leader board qui n'affiche pas encore les données
-                for (player in listPlayer) {
-                    linearLayout.addView(LayoutInflater.from(this).inflate(R.layout.leader_board_item, null))
-                }*/
-
-                /*    --------------------  Recycler view qui ne fonctionne pas
-                        val myAdapter = LeaderListAdapter(listPlayer)
-                        val linearLayoutManager = LinearLayoutManager(this)
-
-                        val recyclerView : RecyclerView = findViewById(R.id.leaderBoardList)
-                        with(recyclerView) {
-                            layoutManager = linearLayoutManager
-                            adapter = myAdapter
-                        }
-                */
-
-        /*
         // ---------- partager de données sur une autre App ----------------
                 // On initialise l'élément à envoyer
 
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, "Mob Score : "+score.toString())
+                    putExtra(Intent.EXTRA_TEXT, "Voici mon score sur le BestQuizz App : " + score.toString() + " pts. \nL'app est dispo prochainement sur Android et iOS !!")
                     type = "text/plain"
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
 
                 // ***************** ajouter un boutton ici ************
-                val shareButton = findViewById<View>(R.id.leaderBoardList) as Button
+                val shareButton = findViewById<View>(R.id.shareBtn) as Button
                 // On crée un listener
                 val shareAction = View.OnClickListener {
                     startActivity(shareIntent) // On appelle l'élément pour l'envoie
                 }
                 shareButton.setOnClickListener(shareAction)
                 // _________________________________________________________
-
-         */
 
         SonQuizz.playTheme()
 
