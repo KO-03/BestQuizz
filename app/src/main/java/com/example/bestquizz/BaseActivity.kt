@@ -8,7 +8,8 @@ import androidx.appcompat.widget.Toolbar
 import de.hdodenhof.circleimageview.CircleImageView
 
 open class BaseActivity : AppCompatActivity() {
-
+    var category : Int = 11
+    var difficulty : String = "easy"
     override fun setSupportActionBar(toolbar: Toolbar?) {
         super.setSupportActionBar(findViewById(R.id.toolBar))
     }

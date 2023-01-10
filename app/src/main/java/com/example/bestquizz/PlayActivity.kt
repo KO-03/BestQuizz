@@ -70,6 +70,7 @@ class PlayActivity : BaseActivity() {
 
         rafraichirInterface()
         nextBtn.setOnClickListener{
+            SonQuizz.playSon(this@PlayActivity,R.raw.click)
 
             if(questionIndex < quiz.nbOfQuestions!! - 1) {
                 //Toast.makeText(applicationContext, "NEXT", Toast.LENGTH_SHORT).show()

@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -18,11 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BestQuizz"
         tools:targetApi="31">
-
         <activity
-            android:name=".MainActivity"
+            android:name=".Splash_Screen"
             android:exported="true">
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -32,15 +31,16 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+        </activity>
         <activity
             android:name=".PlayActivity"
             android:exported="true" />
-
         <activity
             android:name=".ScoreActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

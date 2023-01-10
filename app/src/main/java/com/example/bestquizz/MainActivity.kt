@@ -18,8 +18,6 @@ import retrofit2.Response
 class MainActivity : BaseActivity() {
     private var db: DBApp? = DBApp(this)
     val nbresponse : Int = 10
-    val category : Int = 11
-    val difficulty : String = "easy"
     val questionType : String = "multiple"
     val questionEncoding : String = ""
     lateinit var questionsValue : ArrayList<QuestionEntity>
@@ -107,6 +105,7 @@ class MainActivity : BaseActivity() {
             startActivity(activity_experience)
         }
         easterEggBtn.setOnClickListener(easterAction)
+
     }
 
     fun loadQuestions(){
